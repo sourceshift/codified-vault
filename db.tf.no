@@ -1,0 +1,69 @@
+resource "vault_mount" "database" {
+  path        = "database"
+  type        = "database"
+  description = "Database RBAC"
+}
+
+resource "vault_database_secret_backend_connection" "mysql" {
+  backend = vault_mount.database.path
+  name    = "mysql"
+
+  allowed_roles            = ["mysql*"]
+  root_rotation_statements = ["SET PASSWORD = '{{password}}'"]
+  verify_connection        = true
+  data = { username = "mysqldbavault"
+  password = "mysqldbavault" }
+  mysql {
+    connection_url       = "{{username}}:{{password}}@tcp(mysql.hld.sourceshift.org:3306)/mysql?tls=skip-verify"
+    max_open_connections = 50
+  }
+}
+
+resource "vault_database_secret_backend_role" "mysql_dba" {
+  backend     = vault_mount.database.path
+  name        = "mysql_dba"
+  db_name     = vault_database_secret_backend_connection.mysql.name
+  default_ttl = 3600
+  max_ttl     = (24 * 3600)
+  creation_statements = ["CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';",
+    "GRANT ALL PRIVILEGES ON *.* TO '{{name}}'@'%';",
+    "GRANT Grant option ON *.* TO '{{name}}'@'%';",
+    "flush privileges;"
+  ]
+  revocation_statements = [
+    "REVOKE ALL PRIVILEGES ON *.* FROM '{{name}}'@'%';",
+    "REVOKE Grant option ON *.* FROM '{{name}}'@'%';",
+    "flush privileges;",
+    "DROP USER IF EXISTS '{{name}}'@'%' ;"
+  ]
+  renew_statements = [
+    "ALTER USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';",
+    "flush privileges;"
+  ]
+
+}
+
+resource "vault_database_secret_backend_role" "mysql_healthify" {
+  backend     = vault_mount.database.path
+  name        = "mysql_healthify"
+  db_name     = vault_database_secret_backend_connection.mysql.name
+  default_ttl = (7 * 24 * 3600)
+  max_ttl     = (32 * 24 * 3600)
+  creation_statements = [
+    "CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';",
+    "GRANT ALL PRIVILEGES ON healthify.* TO '{{name}}'@'%';",
+    "GRANT Grant option ON healthify.* TO '{{name}}'@'%';",
+    "flush privileges;"
+  ]
+  revocation_statements = [
+    "REVOKE ALL PRIVILEGES ON healthify.* FROM '{{name}}'@'%';",
+    "REVOKE Grant option ON healthify.* FROM '{{name}}'@'%';",
+    "flush privileges;",
+    "DROP USER IF EXISTS '{{name}}'@'%' ;"
+  ]
+  renew_statements = [
+    "ALTER USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';",
+    "flush privileges;"
+  ]
+
+}

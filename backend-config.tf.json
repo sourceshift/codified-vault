@@ -1,0 +1,13 @@
+{
+    "terraform": {
+        "backend": {
+            "s3": {
+                "bucket": "sourceshift-tfstate",
+                "region": "us-east-1",
+                "endpoint": "us-east-1.linodeobjects.com",
+                "key": "codified_vault/main.tfstate",
+                "skip_credentials_validation": true
+            }
+        }
+    }
+}
