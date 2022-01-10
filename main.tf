@@ -1,10 +1,10 @@
 # Use Vault provider
 variable "VAULT_ADDR" {
   type    = string
-  default = "https://vault.dev.sourceshift.org:8200"
+  default = ""
 }
 
-variable "VAULT_PROVIDER_TOKEN" {
+variable "VAULT_TOKEN" {
   type      = string
   default   = ""
   sensitive = true
@@ -13,7 +13,7 @@ variable "VAULT_PROVIDER_TOKEN" {
 provider "vault" {
   address         = var.VAULT_ADDR
   skip_tls_verify = true
-  token = var.VAULT_PROVIDER_TOKEN
+  token = var.VAULT_TOKEN
 }
 
 /* resource "vault_policy" "default" {

@@ -29,3 +29,7 @@ override.tf.json
 # example: *tfplan*
 backend-config.tf.json
 .terraform.lock.hcl
+.secret.backend-config.tf.json
+.secret.backend-config.json
+.secret.all.json
+tfplan
