@@ -1,7 +1,7 @@
 # Use Vault provider
 variable "VAULT_ADDR" {
   type    = string
-  default = "https://vault.sourceshift.org:8200"
+  default = "https://vault.dev.sourceshift.org:8200"
 }
 
 variable "VAULT_PROVIDER_TOKEN" {
