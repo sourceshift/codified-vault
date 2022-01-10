@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+set -e
+
 if [[ -z "$VAULT_ADDR" ]]; then
     echo "VAULT_ADDR is not set"
     exit 1
