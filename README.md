@@ -28,7 +28,7 @@
 }
 ```
 
-* (*Optional*) If the backend is s3 and the credentials and configuration are present in any other vault in following path `vault-api/secret/data/terraform/backend/s3/codified-vault` then you can Generate the Terraform File using the following command.
+* (*Optional*) If the backend is s3 and the credentials and configuration are present in any other vault in following path `$VAULT_ADDR/v1/secret/data/terraform/backend/s3/codified-vault` then you can Generate the Terraform File using the following command.
 
 ```bash
 export VAULT_ADDR=https://addr
